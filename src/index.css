@@ -6,3 +6,12 @@
   box-sizing: border-box;
 }
 
+
+#forminput{
+  padding: 5px;
+}
+
+#loginbutton{
+  padding: 5px;
+  border: 1px solid black;
+}
