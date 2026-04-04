@@ -1,56 +1,163 @@
-import React from 'react'
+import { React, useEffect, useState } from 'react';
+//icons
+import { FaBeer } from "react-icons/fa";
+import DehazeIcon from '@mui/icons-material/Dehaze';
+import AddIcon from '@mui/icons-material/Add';
+import SearchIcon from '@mui/icons-material/Search';
+import CloseIcon from '@mui/icons-material/Close';
 
 const Home = () => {
+  const [showPopup, setShowPopup] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(true);
+  const [currFile, setcurrFile] = useState(null);
+  const [editorText, setEditorText] = useState("");
+  const [fileType, setFileType] = useState("note");
+  const [fileName, setFileName] = useState("");
+  const [fileContent, setFileContent] = useState("");
 
 
 
 
-  
+  const handleAddButton = () => {
+    setShowPopup(!showPopup);
+  }
+
+  const toggleSidebar = () => {
+    setShowPopup(false);
+    setShowSidebar((prev) => !prev);
+  };
+
 
 
   return (
     // container
-    <div className='text-2xl font-bold text-center flex align-items-center justify-content text-white w-full h-screen overflow-hidden'>
-      
-      
-      {/* //left */}
-      <div className='h-screen w-2/6 bg-gray-50 text-black border-r-1 border-gray-400 max-w-[520px] min-w-[320px]'>
+    <div className='flex w-full h-screen overflow-hidden bg-gray-100 font-sans text-gray-800 tracking-tight'>
+
+      {/* //left sidebar */}
+      <div
+        className={`left-sidebar flex flex-col h-screen shrink-0 bg-white border-r border-gray-200 shadow-sm z-10 transition-all duration-500 ease-in-out
+        ${showSidebar ? "w-[320px] md:w-[380px] opacity-100 visible" : "w-0 opacity-0 invisible overflow-hidden border-none"}
+      `}>
         {/* header */}
-        <div className='h-10 bg-gray-50 text-lg flex items-center border-gray-400 border-b-1 justify-between'>
-          <button className="border border-gray-900 px-4 py-2 rounded hover:bg-cyan-400 w-20 cursor-pointer transition duration-1000">-></button>
-          <span>All Notes</span>
-          <button className='border border-gray-900 px-4 py-2 rounded hover:bg-cyan-400 w-20 cursor-pointer transition duration-1000'>+</button>
-        </div>
-        {/* //search */}
-        <div className='flex w-full h-10 bg-gray-50 overflow-hidden'>
-          <button className='hover:bg-gray-200 w-1/6 border-b-1 border-gray-400 cursor-pointer'>🔍</button>
-          <input type="text" className='w-5/6 border-b-1 border-gray-400 placeholder-gray-400 text-lg' placeholder='Search All Notes And Tags'  />
-        </div>
-        {/* //list */}
-        <div className=''></div>
-      </div>
+        <div className='relative h-[64px] min-h-[64px] px-4 flex items-center justify-between border-b border-gray-100 bg-white/80 backdrop-blur-md sticky top-0 z-50'>
+          <button onClick={toggleSidebar} className="p-2.5 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-all duration-200 active:scale-95 cursor-pointer flex items-center justify-center group focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
+            <DehazeIcon className="transition-transform group-hover:scale-110" />
+          </button>
+          <span className="font-semibold text-gray-700 tracking-wide text-lg">All Notes</span>
+          <div className="relative flex items-center">
+            <button onClick={handleAddButton} className='p-2.5 text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-md shadow-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/30 rounded-xl transition-all duration-200 active:scale-95 cursor-pointer flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-indigo-500/50'>
+              <AddIcon />
+            </button>
 
+            {showPopup && (
+              <div className='popup absolute top-full right-0 mt-3 w-80 bg-white border border-black rounded-2xl shadow-xl z-50 text-left cursor-default'>
+                {/* Header */}
+                <div className='flex justify-between items-center mb-4'>
+                  <h2 className='text-base font-bold text-gray-900 tracking-tight'>Create New</h2>
+                  <button onClick={handleAddButton} className='p-1 text-gray-400 hover:text-gray-900 hover:bg-black/5 rounded-lg transition-colors cursor-pointer'>
+                    <CloseIcon fontSize="small" />
+                  </button>
+                </div>
 
+                <form action="#" className="flex flex-col gap-4">
+                  {/* Type Selection */}
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Select Type</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <label className="flex items-center gap-2 p-2.5 border border-gray-200/60 rounded-xl cursor-pointer hover:bg-white/60 transition-colors">
+                        <input type="radio" name="itemType" onChange={(e) => { setFileType(e.target.value) }} value="note" defaultChecked className="w-4 h-4 cursor-pointer accent-indigo-600" />
+                        <span className="text-sm font-medium text-gray-700">Note</span>
+                      </label>
+                      <label className="flex items-center gap-2 p-2.5 border border-gray-200/60 rounded-xl cursor-pointer hover:bg-white/60 transition-colors">
+                        <input type="radio" name="itemType" onChange={(e) => { setFileType(e.target.value) }} value="task" className="w-4 h-4 cursor-pointer accent-indigo-600" />
+                        <span className="text-sm font-medium text-gray-700">Task</span>
+                      </label>
+                    </div>
+                  </div>
 
+                  {/* Name Input */}
+                  <div className="space-y-2 mt-1">
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">File Name</label>
+                    <input type="text" value={fileName} onChange={(e) => { setFileName(e.target.value) }} className="w-full px-3 py-2 text-sm text-gray-800 border border-gray-200/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 bg-white/60 focus:bg-white transition-all placeholder-gray-400" placeholder="Enter name..." />
+                  </div>
 
-      {/* //right */}
-      <div className='h-screen w-full bg-gray-50 flex-col items-center text-black'>
-        {/* //header */}
-        <div className='h-10 bg-gray-50 text-lg flex items-center justify-between border-b-1 border-gray-400'>
-          {/* left */}
-          <button className="px-4 py-2 rounded text-black w-15 pl-10 border-black border-1 hover:bg-cyan-400 cursor-pointer transition duration-1000"> ← </button>
-          {/* right */}
-          <div className='flex items-center justify-between mr-20'>
-            <span className='px-4 py-2 rounded text-black ml-20 w-15 pl-10 border-black border-1 hover:bg-cyan-400 cursor-pointer transition duration-1000'>F</span>
-            <span className='px-4 py-2 rounded text-black ml-20 w-15 pl-10 border-black border-1 hover:bg-cyan-400 cursor-pointer transition duration-1000'>G</span>
-            <span className='px-4 py-2 rounded text-black ml-20 w-15 pl-10 border-black border-1 hover:bg-cyan-400 cursor-pointer transition duration-1000'>H</span>
+                  <button type="button" onClick={handleAddButton} className="mt-2 w-full py-2.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md shadow-indigo-600/20 active:scale-95 transition-all cursor-pointer">
+                    Create
+                  </button>
+                </form>
+              </div>
+            )}
+
           </div>
         </div>
-        {/* //editor */}
-        <textarea name="editor" id="editor" className='w-full p-4 h-screen text-lg text-black'>D</textarea>
+
+
+        {/* //search */}
+        <div className='p-3 border-b border-gray-100 bg-gray-50/50'>
+          <div className='flex items-center w-full bg-white border border-gray-200 rounded-xl px-3 py-2 shadow-sm transition-shadow focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100 focus-within:shadow-md'>
+            <SearchIcon className="text-gray-400 w-5 h-5 flex-shrink-0" />
+            <input
+              type="text"
+              className='w-full bg-transparent outline-none placeholder-gray-400 text-sm text-gray-800 ml-2 focus:outline-none focus:ring-0'
+              placeholder='Search notes and tags...'
+            />
+          </div>
+        </div>
+
+        {/* //list */}
+        <div className='flex-1 overflow-y-auto bg-white p-3 space-y-2'>
+          {/* Example empty state or list container */}
+          <div className="flex flex-col items-center justify-center h-40 text-gray-400 text-sm opacity-60">
+            No notes yet. Create one!
+          </div>
+        </div>
       </div>
 
+      {/* //right main content */}
+      <div className='flex flex-col flex-1 h-screen bg-white'>
+        {/* //header */}
+        <div className='h-14 px-4 mt-2 flex items-center justify-between sticky top-0'>
+          {/* left */}
+          <div>
+            <button onClick={toggleSidebar} className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors duration-150 cursor-pointer flex items-center justify-center focus:outline-none">
+              {
+                !showSidebar ? <DehazeIcon /> : <></>
+              }
+            </button>
+            <div>
+              {currFile ? currFile.name : "New Note"}
+            </div>
+          </div>
 
+          {/* right */}
+          <div className='flex items-center gap-1'>
+            <button className='px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors duration-150 cursor-pointer focus:outline-none'>
+              Share
+            </button>
+            <button className='px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors duration-150 cursor-pointer focus:outline-none hidden sm:block'>
+              Export
+            </button>
+            <button className='px-4 py-1.5 text-sm font-medium text-white bg-black hover:bg-gray-800 rounded-md transition-colors duration-150 cursor-pointer shadow-sm focus:outline-none ml-2'>
+              Save
+            </button>
+          </div>
+        </div>
+
+        {/* //editor */}
+        <div className='flex-1 px-8 md:px-16 pt-4 pb-20 overflow-y-auto'>
+          <div className='mx-auto w-full'>
+            <textarea
+              name="editor"
+              id="editor"
+              value={editorText}
+              onChange={(e) => { setEditorText(e.target.value) }}
+              className='w-full min-h-[800px] bg-transparent outline-none resize-none text-gray-800 text-[16px] leading-[1.8] placeholder-gray-300 focus:outline-none focus:ring-0 selection:bg-gray-200'
+              placeholder="Press Enter to continue typing..."
+              defaultValue="D"
+            ></textarea>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

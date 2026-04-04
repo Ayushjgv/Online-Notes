@@ -1,17 +1,41 @@
 @import "tailwindcss";
 
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
 
-#forminput{
+#forminput {
   padding: 5px;
 }
 
-#loginbutton{
+#loginbutton {
   padding: 5px;
   border: 1px solid black;
+}
+
+
+.popup {
+  padding: 15px;
+  backdrop-filter: blur(25px);
+  margin-top: 15px;
+  -webkit-backdrop-filter: blur(25px);
+}
+
+input {
+  padding: 5px;
+  margin: 5px;
+  /* border: 1px solid black; */
+}
+
+textarea {
+  padding: 5px;
+  margin: 5px;
+  /* border: 1px solid black; */
+}
+
+.left-sidebar {
+  transition: all 0.3s ease-in-out;
 }
