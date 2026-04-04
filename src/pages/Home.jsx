@@ -5,6 +5,9 @@ import DehazeIcon from '@mui/icons-material/Dehaze';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
+import NoteAltIcon from '@mui/icons-material/NoteAlt';
+import EditIcon from '@mui/icons-material/Edit';
+import SyncIcon from '@mui/icons-material/Sync';
 
 const Home = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -14,6 +17,7 @@ const Home = () => {
   const [fileType, setFileType] = useState("note");
   const [fileName, setFileName] = useState("");
   const [fileContent, setFileContent] = useState("");
+  const [allFiles, setallFiles] = useState([]);
 
 
 
@@ -25,6 +29,28 @@ const Home = () => {
   const toggleSidebar = () => {
     setShowPopup(false);
     setShowSidebar((prev) => !prev);
+  };
+
+  const handleCreateNew = () => {
+    if (fileName.trim() === "") {
+      alert("Please enter a file name");
+      return;
+    }
+    const newFile = {
+      id: Date.now(),
+      name: fileName,
+      type: fileType,
+      content: ""
+    };
+    setallFiles((prev) => [newFile, ...prev]);
+    setFileName("");
+    setFileType("note");
+    setShowPopup(false);
+  };
+
+  const handleFileClick = (file) => {
+    setcurrFile(file);
+    setEditorText(file.content || "");
   };
 
 
@@ -54,7 +80,7 @@ const Home = () => {
                 {/* Header */}
                 <div className='flex justify-between items-center mb-4'>
                   <h2 className='text-base font-bold text-gray-900 tracking-tight'>Create New</h2>
-                  <button onClick={handleAddButton} className='p-1 text-gray-400 hover:text-gray-900 hover:bg-black/5 rounded-lg transition-colors cursor-pointer'>
+                  <button onClick={() => { setShowPopup(false) }} className='p-1 text-gray-400 hover:text-gray-900 hover:bg-black/5 rounded-lg transition-colors cursor-pointer'>
                     <CloseIcon fontSize="small" />
                   </button>
                 </div>
@@ -81,7 +107,7 @@ const Home = () => {
                     <input type="text" value={fileName} onChange={(e) => { setFileName(e.target.value) }} className="w-full px-3 py-2 text-sm text-gray-800 border border-gray-200/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 bg-white/60 focus:bg-white transition-all placeholder-gray-400" placeholder="Enter name..." />
                   </div>
 
-                  <button type="button" onClick={handleAddButton} className="mt-2 w-full py-2.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md shadow-indigo-600/20 active:scale-95 transition-all cursor-pointer">
+                  <button type="button" onClick={handleCreateNew} className="mt-2 w-full py-2.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md shadow-indigo-600/20 active:scale-95 transition-all cursor-pointer">
                     Create
                   </button>
                 </form>
@@ -107,9 +133,21 @@ const Home = () => {
         {/* //list */}
         <div className='flex-1 overflow-y-auto bg-white p-3 space-y-2'>
           {/* Example empty state or list container */}
-          <div className="flex flex-col items-center justify-center h-40 text-gray-400 text-sm opacity-60">
-            No notes yet. Create one!
-          </div>
+          {
+            allFiles.length > 0 ? allFiles.map((file) => {
+              return (
+                <div onClick={() => handleFileClick(file)} key={file.id} className="list-items flex items-center justify-between p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
+                  <span className="text-sm font-medium text-gray-700">{file.name}</span>
+                  <button onClick={() => handleFileClick(file)} className="text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors cursor-pointer">
+                    <SyncIcon />
+
+                  </button>
+                </div>
+              )
+            }) : <div className="flex items-center justify-center h-full">
+              <span className="text-sm font-medium text-gray-700">No files Yet</span>
+            </div>
+          }
         </div>
       </div>
 
@@ -124,9 +162,11 @@ const Home = () => {
                 !showSidebar ? <DehazeIcon /> : <></>
               }
             </button>
-            <div>
-              {currFile ? currFile.name : "New Note"}
-            </div>
+
+          </div>
+          {/* middle */}
+          <div>
+            {currFile ? currFile.name : "New Note"}
           </div>
 
           {/* right */}
