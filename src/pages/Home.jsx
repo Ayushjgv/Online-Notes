@@ -109,7 +109,7 @@ const Home = () => {
       {/* //left sidebar */}
       <div
         className={`left-sidebar flex flex-col h-screen shrink-0 bg-white border-r border-gray-200 shadow-sm z-10 transition-all duration-500 ease-in-out
-        ${showSidebar ? "w-[320px] md:w-[380px] opacity-100 visible" : "w-0 opacity-0 invisible overflow-hidden border-none"}
+        ${showSidebar ? "w-[150px] md:w-[320px] opacity-100 visible" : "w-0 opacity-0 invisible overflow-hidden border-none"}
       `}>
         {/* header */}
         <div className='relative h-[64px] min-h-[64px] px-4 flex items-center justify-between border-b border-gray-100 bg-white/80 backdrop-blur-md sticky top-0 z-50'>
