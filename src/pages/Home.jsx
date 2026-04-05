@@ -314,7 +314,7 @@ const Home = () => {
                   id="editor"
                   value={editorText}
                   onChange={(e) => { handleEditor(e) }}
-                  className={`w-full flex-1 min-h-[calc(100vh-120px)] bg-transparent outline-none resize-none text-gray-800 text-[16px] leading-[1.8] placeholder-gray-300 focus:outline-none focus:ring-0 selection:bg-gray-200 transition-colors duration-200 ${align === "left" ? "text-left" : align === "center" ? "text-center" : "text-right"}`}
+                  className={`flex-1 min-h-[calc(100vh-120px)] bg-transparent outline-none resize-none text-gray-800 text-[16px] leading-[1.8] placeholder-gray-300 focus:outline-none focus:ring-0 selection:bg-gray-200 transition-colors duration-200 ${align === "left" ? "text-left" : align === "center" ? "text-center" : "text-right"}`}
                   placeholder="Press Enter to continue typing..."
                 ></textarea>
               </div>
