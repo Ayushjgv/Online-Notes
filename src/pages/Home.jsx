@@ -1,5 +1,6 @@
 import { React, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import jsPDF from 'jspdf';
 //firebase
 import { useFirebase } from '../context/Firebase';
 
@@ -13,6 +14,10 @@ import NoteAltIcon from '@mui/icons-material/NoteAlt';
 import EditIcon from '@mui/icons-material/Edit';
 import SyncIcon from '@mui/icons-material/Sync';
 import DeleteIcon from '@mui/icons-material/Delete';
+import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
+import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
+import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight';
+import DownloadIcon from '@mui/icons-material/Download';
 
 const Home = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -22,6 +27,9 @@ const Home = () => {
   const [fileType, setFileType] = useState("note");
   const [fileName, setFileName] = useState("");
   const [allFiles, setallFiles] = useState([]);
+  const [align, setAlign] = useState("left");
+  const [isDownload, setisDownload] = useState(false);
+  const [downloadType, setDownloadType] = useState("txt");
 
 
   const firebase = useFirebase();
@@ -101,10 +109,57 @@ const Home = () => {
     firebase.updateNote(currFile.id, { note: { name: currFile.note.name, content: e.target.value } });
   }
 
+  const handleDownload = () => {
+    if (downloadType === "txt") {
+      const element = document.createElement("a");
+      const file = new Blob([editorText], { type: "text/plain" });
+      element.href = URL.createObjectURL(file);
+      element.download = currFile.note.name + ".txt";
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+    }
+    else if (downloadType === "pdf") {
+      const doc = new jsPDF();
+      doc.text(editorText, 10, 10);
+      doc.save(currFile.note.name + ".pdf");
+    }
+    else if (downloadType === "md") {
+      const element = document.createElement("a");
+      const file = new Blob([editorText], { type: "text/markdown" });
+      element.href = URL.createObjectURL(file);
+      element.download = currFile.note.name + ".md";
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+    }
+  }
+
 
   return (
     // container
     <div className='flex w-full h-screen overflow-hidden bg-gray-100 font-sans text-gray-800 tracking-tight'>
+
+      {
+        isDownload ? (
+          <div className='w-full h-full fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50' id='download'>
+            <div className='bg-white p-6 rounded-lg shadow-lg' id='download'>
+              <h2 className='text-base font-bold text-gray-900 tracking-tight'>Download</h2>
+              <p className='text-sm text-gray-600'>Are you sure you want to download this file?</p>
+              <select name="" id="" className='w-full h-10 border-1 border-black rounded-md' onChange={(e) => setDownloadType(e.target.value)}>
+                <option value="txt">Text</option>
+                <option value="pdf">PDF</option>
+                <option value="md">Markdown</option>
+              </select>
+              <div className='flex justify-end gap-2 mt-4'>
+                <button onClick={() => { setisDownload(false) }} className='px-4 py-1.5 text-sm font-medium text-gray-700 hover:text-black rounded-md transition-colors duration-150 cursor-pointer shadow-sm focus:outline-none'>Cancel</button>
+                <button onClick={() => { handleDownload(); setisDownload(false) }} className='px-4 py-1.5 text-sm font-medium text-white bg-red-700 hover:bg-gray-800 rounded-md transition-colors duration-150 cursor-pointer shadow-sm focus:outline-none'>Download</button>
+              </div>
+            </div>
+          </div>
+        ) : <></>
+      }
+
 
       {/* //left sidebar */}
       <div
@@ -214,11 +269,13 @@ const Home = () => {
                 !showSidebar ? <DehazeIcon /> : <></>
               }
             </button>
-
+            {currFile ? currFile.note.name : "New Note"}
           </div>
           {/* middle */}
           <div>
-            {currFile ? currFile.note.name : "New Note"}
+            <button onClick={() => setAlign("left")}><FormatAlignLeftIcon /></button>
+            <button onClick={() => setAlign("center")}><FormatAlignCenterIcon /></button>
+            <button onClick={() => setAlign("right")}><FormatAlignRightIcon /></button>
           </div>
 
           {/* right */}
@@ -229,8 +286,8 @@ const Home = () => {
             <button className='px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors duration-150 cursor-pointer focus:outline-none hidden sm:block'>
               Export
             </button>
-            <button className='px-4 py-1.5 text-sm font-medium text-white bg-black hover:bg-gray-800 rounded-md transition-colors duration-150 cursor-pointer shadow-sm focus:outline-none ml-2'>
-              Save
+            <button onClick={() => { setisDownload(true) }} className='px-4 py-1.5 text-sm font-medium text-gray-700 hover:text-black rounded-md transition-colors duration-150 cursor-pointer shadow-sm focus:outline-none ml-2'>
+              <DownloadIcon />
             </button>
             <button onClick={() => { handleLogout() }} className="px-4 py-1.5 text-sm font-medium text-white bg-red-700 hover:bg-gray-800 rounded-md transition-colors duration-150 cursor-pointer shadow-sm focus:outline-none ml-2">
               Logout
@@ -248,7 +305,7 @@ const Home = () => {
                   id="editor"
                   value={editorText}
                   onChange={(e) => { handleEditor(e) }}
-                  className='w-full flex-1 min-h-[calc(100vh-120px)] bg-transparent outline-none resize-none text-gray-800 text-[16px] leading-[1.8] placeholder-gray-300 focus:outline-none focus:ring-0 selection:bg-gray-200 transition-colors duration-200'
+                  className={`w-full flex-1 min-h-[calc(100vh-120px)] bg-transparent outline-none resize-none text-gray-800 text-[16px] leading-[1.8] placeholder-gray-300 focus:outline-none focus:ring-0 selection:bg-gray-200 transition-colors duration-200 ${align === "left" ? "text-left" : align === "center" ? "text-center" : "text-right"}`}
                   placeholder="Press Enter to continue typing..."
                 ></textarea>
               </div>
