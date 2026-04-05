@@ -12,6 +12,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import NoteAltIcon from '@mui/icons-material/NoteAlt';
 import EditIcon from '@mui/icons-material/Edit';
 import SyncIcon from '@mui/icons-material/Sync';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const Home = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -20,7 +21,6 @@ const Home = () => {
   const [editorText, setEditorText] = useState("");
   const [fileType, setFileType] = useState("note");
   const [fileName, setFileName] = useState("");
-  const [fileContent, setFileContent] = useState("");
   const [allFiles, setallFiles] = useState([]);
 
 
@@ -30,10 +30,23 @@ const Home = () => {
 
 
   useEffect(() => {
-    if (!firebase.isLoggedIn) {
+    if (!firebase.isLoggedIn || !firebase.User) {
       navigate("/");
+      return;
     }
-  }, [firebase.isLoggedIn]);
+
+    const id = firebase.User.uid;
+    firebase.getNotes((notes) => {
+      if (!notes) return;
+      const userNotes = Object.entries(notes).map(([id, data]) => ({
+        id,
+        ...data
+      }));
+      setallFiles(userNotes);
+    });
+
+
+  }, [firebase.isLoggedIn, firebase.User]);
 
 
   const handleAddButton = () => {
@@ -60,16 +73,32 @@ const Home = () => {
     setFileName("");
     setFileType("note");
     setShowPopup(false);
+
+    firebase.addNote(newFile);
   };
 
   const handleFileClick = (file) => {
     setcurrFile(file);
-    setEditorText(file.content || "");
+    setEditorText(file.note.content || "");
   };
 
   const handleLogout = () => {
     firebase.logoutUser();
     navigate("/");
+  }
+
+  const handleDelete = async (id) => {
+    if (confirm("Are you sure you want to delete this file?")) {
+      await firebase.deleteNote(id);
+      setallFiles((prev) => prev.filter((file) => file.id !== id));
+      setcurrFile(null);
+      setEditorText("");
+    }
+  }
+
+  const handleEditor = (e) => {
+    setEditorText(e.target.value);
+    firebase.updateNote(currFile.id, { note: { name: currFile.note.name, content: e.target.value } });
   }
 
 
@@ -93,6 +122,7 @@ const Home = () => {
               <AddIcon />
             </button>
 
+            {/* popup */}
             {showPopup && (
               <div className='popup absolute top-full right-0 mt-3 w-80 bg-white border border-black rounded-2xl shadow-xl z-50 text-left cursor-default'>
                 {/* Header */}
@@ -103,7 +133,7 @@ const Home = () => {
                   </button>
                 </div>
 
-                <form action="#" className="flex flex-col gap-4">
+                <form action="#" className="flex flex-col gap-4" onSubmit={(e) => { e.preventDefault(); }}>
                   {/* Type Selection */}
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Select Type</label>
@@ -155,11 +185,15 @@ const Home = () => {
             allFiles.length > 0 ? allFiles.map((file) => {
               return (
                 <div onClick={() => handleFileClick(file)} key={file.id} className="list-items flex items-center justify-between p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
-                  <span className="text-sm font-medium text-gray-700">{file.name}</span>
-                  <button onClick={() => handleFileClick(file)} className="text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors cursor-pointer">
-                    <SyncIcon />
-
-                  </button>
+                  <span className="text-sm font-medium text-gray-700">{file.note.name}</span>
+                  <div>
+                    <button onClick={() => handleFileClick(file)} className="text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors cursor-pointer">
+                      <SyncIcon />
+                    </button>
+                    <button onClick={() => handleDelete(file.id)} className="text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors cursor-pointer">
+                      <DeleteIcon />
+                    </button>
+                  </div>
                 </div>
               )
             }) : <div className="flex items-center justify-center h-full">
@@ -172,7 +206,7 @@ const Home = () => {
       {/* //right main content */}
       <div className='flex flex-col flex-1 h-screen bg-white'>
         {/* //header */}
-        <div className='h-14 px-4 mt-2 flex items-center justify-between sticky top-0'>
+        <div className='h-14 px-4 mt-2 flex items-center justify-between sticky top-0 border-b border-gray-400'>
           {/* left */}
           <div>
             <button onClick={toggleSidebar} className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors duration-150 cursor-pointer flex items-center justify-center focus:outline-none">
@@ -184,7 +218,7 @@ const Home = () => {
           </div>
           {/* middle */}
           <div>
-            {currFile ? currFile.name : "New Note"}
+            {currFile ? currFile.note.name : "New Note"}
           </div>
 
           {/* right */}
@@ -205,22 +239,28 @@ const Home = () => {
         </div>
 
         {/* //editor */}
-        <div className='flex-1 px-8 md:px-16 pt-4 pb-20 overflow-y-auto'>
-          <div className='mx-auto w-full'>
-            <textarea
-              name="editor"
-              id="editor"
-              value={editorText}
-              onChange={(e) => { setEditorText(e.target.value) }}
-              className='w-full min-h-[800px] bg-transparent outline-none resize-none text-gray-800 text-[16px] leading-[1.8] placeholder-gray-300 focus:outline-none focus:ring-0 selection:bg-gray-200'
-              placeholder="Press Enter to continue typing..."
-              defaultValue="D"
-            ></textarea>
-          </div>
-        </div>
+        {
+          currFile ? (
+            <div className='flex-1 flex flex-col px-8 md:px-16 pt-4 pb-12 overflow-y-auto'>
+              <div className='mx-auto w-full flex-1 flex flex-col'>
+                <textarea
+                  name="editor"
+                  id="editor"
+                  value={editorText}
+                  onChange={(e) => { handleEditor(e) }}
+                  className='w-full flex-1 min-h-[calc(100vh-120px)] bg-transparent outline-none resize-none text-gray-800 text-[16px] leading-[1.8] placeholder-gray-300 focus:outline-none focus:ring-0 selection:bg-gray-200 transition-colors duration-200'
+                  placeholder="Press Enter to continue typing..."
+                ></textarea>
+              </div>
+            </div>) : (<div className='flex-1 px-8 md:px-16 pt-4 pb-20 overflow-y-auto flex items-center justify-center'>
+              <div className='mx-auto text-center'>
+                <span className='text-sm font-medium text-gray-400'>No file selected</span>
+              </div>
+            </div>)
+        }
       </div>
     </div>
   )
 }
 
-export default Home
+export default Home;
