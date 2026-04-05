@@ -7,6 +7,7 @@ import { useFirebase } from '../context/Firebase';
 //icons
 import { FaBeer } from "react-icons/fa";
 import DehazeIcon from '@mui/icons-material/Dehaze';
+import FileOpenIcon from '@mui/icons-material/FileOpen';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
@@ -17,6 +18,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
 import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
 import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight';
+import LogoutIcon from '@mui/icons-material/Logout';
 import DownloadIcon from '@mui/icons-material/Download';
 
 const Home = () => {
@@ -283,14 +285,14 @@ const Home = () => {
             <button className='px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors duration-150 cursor-pointer focus:outline-none'>
               Share
             </button>
-            <button className='px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors duration-150 cursor-pointer focus:outline-none hidden sm:block'>
-              Export
+            <button className='px-4 py-1.5 text-sm font-medium text-gray-700 hover:text-black rounded-md transition-colors duration-150 cursor-pointer  focus:outline-none ml-2'>
+              <FileOpenIcon />
             </button>
-            <button onClick={() => { setisDownload(true) }} className='px-4 py-1.5 text-sm font-medium text-gray-700 hover:text-black rounded-md transition-colors duration-150 cursor-pointer shadow-sm focus:outline-none ml-2'>
+            <button onClick={() => { setisDownload(true) }} className='px-4 py-1.5 text-sm font-medium text-gray-700 hover:text-black rounded-md transition-colors duration-150 cursor-pointer focus:outline-none ml-2'>
               <DownloadIcon />
             </button>
-            <button onClick={() => { handleLogout() }} className="px-4 py-1.5 text-sm font-medium text-white bg-red-700 hover:bg-gray-800 rounded-md transition-colors duration-150 cursor-pointer shadow-sm focus:outline-none ml-2">
-              Logout
+            <button onClick={() => { handleLogout() }} className="px-4 py-1.5 text-sm font-medium text-red-600 hover:text-black rounded-md transition-colors duration-150 cursor-pointer focus:outline-none ml-2">
+              <LogoutIcon />
             </button>
           </div>
         </div>

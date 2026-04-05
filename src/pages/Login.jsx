@@ -1,6 +1,8 @@
 import { React, useState, useEffect } from 'react';
 import { useFirebase } from '../context/Firebase';
 import { useNavigate } from 'react-router-dom';
+//icons
+import GoogleIcon from '@mui/icons-material/Google';
 
 const Login = () => {
 
@@ -38,7 +40,7 @@ const Login = () => {
           <button type='submit' className='bg-cyan-400 w-30 cursor-pointer' id='loginbutton' >Login</button>
           <h6>OR</h6>
         </form>
-        <button className='bg-red-400 w-30 cursor-pointer' id='loginbutton' onClick={firebase.loginWithGoogle} >Google</button>
+        <button className='bg-red-400 w-30 cursor-pointer' id='loginbutton' onClick={firebase.loginWithGoogle} ><GoogleIcon /></button>
         <p>Dont Have An Acvount? <a href="/register" className='text-blue-500'>Register</a> </p>
       </div>
     </div>
@@ -46,3 +48,7 @@ const Login = () => {
 }
 
 export default Login
+
+
+
+
