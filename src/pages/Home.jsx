@@ -241,6 +241,9 @@ const Home = () => {
           {/* Example empty state or list container */}
           {
             allFiles.length > 0 ? allFiles.map((file) => {
+              if (currFile == null) {
+                handleFileClick(file);
+              }
               return (
                 <div onClick={() => handleFileClick(file)} key={file.id} className="list-items flex items-center justify-between p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
                   <span className="text-sm font-medium text-gray-700">{file.note.name}</span>
@@ -266,13 +269,15 @@ const Home = () => {
         {/* //header */}
         <div className='h-14 px-4 mt-2 flex items-center justify-between sticky top-0 border-b border-gray-400'>
           {/* left */}
-          <div>
+          <div className='flex'>
             <button onClick={toggleSidebar} className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors duration-150 cursor-pointer flex items-center justify-center focus:outline-none">
               {
                 !showSidebar ? <DehazeIcon fontSize='small' /> : <></>
               }
             </button>
-            {currFile ? currFile.note.name : "New Note"}
+            <div className='flex items-center gap-1'>
+              {currFile ? currFile.note.name : "New Note"}
+            </div>
           </div>
           {/* middle */}
           <div>
@@ -305,6 +310,7 @@ const Home = () => {
               <div className='mx-auto w-full flex-1 flex flex-col'>
                 <textarea
                   name="editor"
+                  spellCheck="false"
                   id="editor"
                   value={editorText}
                   onChange={(e) => { handleEditor(e) }}
