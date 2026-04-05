@@ -20,6 +20,7 @@ import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
 import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight';
 import LogoutIcon from '@mui/icons-material/Logout';
 import DownloadIcon from '@mui/icons-material/Download';
+import ShareIcon from '@mui/icons-material/Share';
 
 const Home = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -171,12 +172,12 @@ const Home = () => {
         {/* header */}
         <div className='relative h-[64px] min-h-[64px] px-4 flex items-center justify-between border-b border-gray-100 bg-white/80 backdrop-blur-md sticky top-0 z-50'>
           <button onClick={toggleSidebar} className="p-2.5 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-all duration-200 active:scale-95 cursor-pointer flex items-center justify-center group focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
-            <DehazeIcon className="transition-transform group-hover:scale-110" />
+            <DehazeIcon fontSize='small' className="transition-transform group-hover:scale-110" />
           </button>
           <span className="font-semibold text-gray-700 tracking-wide text-lg">All Notes</span>
           <div className="relative flex items-center">
             <button onClick={handleAddButton} className='p-2.5 text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-md shadow-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/30 rounded-xl transition-all duration-200 active:scale-95 cursor-pointer flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-indigo-500/50'>
-              <AddIcon />
+              <AddIcon fontSize='small' />
             </button>
 
             {/* popup */}
@@ -226,7 +227,7 @@ const Home = () => {
         {/* //search */}
         <div className='p-3 border-b border-gray-100 bg-gray-50/50'>
           <div className='flex items-center w-full bg-white border border-gray-200 rounded-xl px-3 py-2 shadow-sm transition-shadow focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100 focus-within:shadow-md'>
-            <SearchIcon className="text-gray-400 w-5 h-5 flex-shrink-0" />
+            <SearchIcon fontSize='small' className="text-gray-400 w-5 h-5 flex-shrink-0" />
             <input
               type="text"
               className='w-full bg-transparent outline-none placeholder-gray-400 text-sm text-gray-800 ml-2 focus:outline-none focus:ring-0'
@@ -245,10 +246,10 @@ const Home = () => {
                   <span className="text-sm font-medium text-gray-700">{file.note.name}</span>
                   <div>
                     <button onClick={() => handleFileClick(file)} className="text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors cursor-pointer">
-                      <SyncIcon />
+                      <SyncIcon fontSize='small' />
                     </button>
                     <button onClick={() => handleDelete(file.id)} className="text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors cursor-pointer">
-                      <DeleteIcon />
+                      <DeleteIcon fontSize='small' />
                     </button>
                   </div>
                 </div>
@@ -268,31 +269,31 @@ const Home = () => {
           <div>
             <button onClick={toggleSidebar} className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors duration-150 cursor-pointer flex items-center justify-center focus:outline-none">
               {
-                !showSidebar ? <DehazeIcon /> : <></>
+                !showSidebar ? <DehazeIcon fontSize='small' /> : <></>
               }
             </button>
             {currFile ? currFile.note.name : "New Note"}
           </div>
           {/* middle */}
           <div>
-            <button onClick={() => setAlign("left")}><FormatAlignLeftIcon /></button>
-            <button onClick={() => setAlign("center")}><FormatAlignCenterIcon /></button>
-            <button onClick={() => setAlign("right")}><FormatAlignRightIcon /></button>
+            <button onClick={() => setAlign("left")}><FormatAlignLeftIcon fontSize='small' /></button>
+            <button onClick={() => setAlign("center")}><FormatAlignCenterIcon fontSize='small' /></button>
+            <button onClick={() => setAlign("right")}><FormatAlignRightIcon fontSize='small' /></button>
           </div>
 
           {/* right */}
           <div className='flex items-center gap-1'>
-            <button className='px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors duration-150 cursor-pointer focus:outline-none'>
-              Share
+            <button className='px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-900 rounded-md transition-colors duration-150 cursor-pointer focus:outline-none'>
+              <ShareIcon fontSize='small' />
             </button>
             <button className='px-4 py-1.5 text-sm font-medium text-gray-700 hover:text-black rounded-md transition-colors duration-150 cursor-pointer  focus:outline-none ml-2'>
-              <FileOpenIcon />
+              <FileOpenIcon fontSize='small' />
             </button>
             <button onClick={() => { setisDownload(true) }} className='px-4 py-1.5 text-sm font-medium text-gray-700 hover:text-black rounded-md transition-colors duration-150 cursor-pointer focus:outline-none ml-2'>
-              <DownloadIcon />
+              <DownloadIcon fontSize='small' />
             </button>
             <button onClick={() => { handleLogout() }} className="px-4 py-1.5 text-sm font-medium text-red-600 hover:text-black rounded-md transition-colors duration-150 cursor-pointer focus:outline-none ml-2">
-              <LogoutIcon />
+              <LogoutIcon fontSize='small' />
             </button>
           </div>
         </div>
