@@ -1,4 +1,8 @@
 import { React, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+//firebase
+import { useFirebase } from '../context/Firebase';
+
 //icons
 import { FaBeer } from "react-icons/fa";
 import DehazeIcon from '@mui/icons-material/Dehaze';
@@ -20,6 +24,16 @@ const Home = () => {
   const [allFiles, setallFiles] = useState([]);
 
 
+  const firebase = useFirebase();
+  const navigate = useNavigate();
+
+
+
+  useEffect(() => {
+    if (!firebase.isLoggedIn) {
+      navigate("/");
+    }
+  }, [firebase.isLoggedIn]);
 
 
   const handleAddButton = () => {
@@ -53,6 +67,10 @@ const Home = () => {
     setEditorText(file.content || "");
   };
 
+  const handleLogout = () => {
+    firebase.logoutUser();
+    navigate("/");
+  }
 
 
   return (
@@ -179,6 +197,9 @@ const Home = () => {
             </button>
             <button className='px-4 py-1.5 text-sm font-medium text-white bg-black hover:bg-gray-800 rounded-md transition-colors duration-150 cursor-pointer shadow-sm focus:outline-none ml-2'>
               Save
+            </button>
+            <button onClick={() => { handleLogout() }} className="px-4 py-1.5 text-sm font-medium text-white bg-red-700 hover:bg-gray-800 rounded-md transition-colors duration-150 cursor-pointer shadow-sm focus:outline-none ml-2">
+              Logout
             </button>
           </div>
         </div>
