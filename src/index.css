@@ -61,3 +61,8 @@ textarea {
   line-height: 1.5;
   width: auto;
 }
+
+.tasks{
+  padding: 5px;
+  margin: 5px;
+}
