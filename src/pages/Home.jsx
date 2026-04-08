@@ -7,6 +7,7 @@ import { useFirebase } from '../context/Firebase';
 //components
 import Left from '../components/Left';
 import Right from '../components/Right';
+import Chatbot from '../components/Chatbot';
 
 const Home = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -269,6 +270,8 @@ const Home = () => {
         handleDone={handleDone}
         handleDeleteTask={handleDeleteTask}
       />
+
+      <Chatbot file={currFile} />
     </div>
   )
 }

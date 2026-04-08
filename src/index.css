@@ -62,7 +62,23 @@ textarea {
   width: auto;
 }
 
-.tasks{
+.tasks {
   padding: 5px;
   margin: 5px;
+}
+
+.chatbot-display {
+  gap: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chatbot-display div {
+  display: flex;
+  flex-direction: row;
+  padding: 5px;
+  margin: 5px;
+  font-size: 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
