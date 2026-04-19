@@ -57,10 +57,10 @@ button {
   margin: 10px;
 }
 
-textarea {
+/* textarea {
   line-height: 1.5;
   width: auto;
-}
+} */
 
 .tasks {
   padding: 5px;
@@ -85,9 +85,14 @@ textarea {
 
 #input-chatbot{
   padding: 5px;
-  margin: 5px;
+  margin-bottom: 15px;
   border: 1px solid black;
   border-radius: 15px;
+}
+
+#input-area {
+  /* padding: 15px; */
+  margin-bottom: 15px;
 }
 
 #messages{
@@ -98,4 +103,33 @@ textarea {
 #message{
   padding: 10px;
   margin: 10px;
+}
+
+.EasyMDEContainer .CodeMirror {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+.EasyMDEContainer .CodeMirror-fullscreen {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+.EasyMDEContainer .editor-preview,
+.EasyMDEContainer .editor-preview-full {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+.EasyMDEContainer .CodeMirror pre {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+}
+.EasyMDEContainer .CodeMirror {
+  max-width: 100% !important;
+}
+
+.CodeMirror-scroll {
+  overflow-x: hidden !important;
 }

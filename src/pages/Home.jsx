@@ -213,8 +213,6 @@ const Home = () => {
 
 
 
-
-
   return (
     // container
     <div className='flex w-full h-screen overflow-hidden bg-gray-100 font-sans text-gray-800 tracking-tight'>

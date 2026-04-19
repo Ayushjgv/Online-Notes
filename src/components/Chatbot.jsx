@@ -128,7 +128,7 @@ const Chatbot = (props) => {
                     </div>
 
                     {/* INPUT */}
-                    <div className='flex w-full h-10 rounded-lg border border-white/40 bg-white/50 p-2'>
+                    <div className='flex w-full h-10 rounded-lg border border-white/40 bg-white/50 p-2' id = 'input-area'>
                         <form action="#" className='flex w-full h-full' onSubmit={(e) => { e.preventDefault() }}>
                             <input
                                 type="text"

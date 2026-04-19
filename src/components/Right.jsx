@@ -1,4 +1,4 @@
-import React from 'react';
+import { React, useState, useEffect, useMemo } from 'react';
 import DehazeIcon from '@mui/icons-material/Dehaze';
 import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
 import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
@@ -11,6 +11,13 @@ import AddTaskIcon from '@mui/icons-material/AddTask';
 import SyncIcon from '@mui/icons-material/Sync';
 import DoneIcon from '@mui/icons-material/Done';
 import DeleteIcon from '@mui/icons-material/Delete';
+import StrikethroughSIcon from '@mui/icons-material/StrikethroughS';
+import Markdown from 'react-markdown';
+import ReactMarkdown from 'react-markdown';
+import { useFirebase } from '../context/Firebase';
+import SimpleMDE from "react-simplemde-editor";
+import "easymde/dist/easymde.min.css";
+
 
 const Right = ({
     showSidebar,
@@ -29,6 +36,33 @@ const Right = ({
     handleDone,
     handleDeleteTask
 }) => {
+    const firebase = useFirebase();
+
+
+    const options = useMemo(() => ({
+        spellChecker: false,
+        placeholder: "Write your markdown...",
+        minHeight: "730px",
+        lineWrapping: true,
+        toolbar: [
+            "bold",
+            "italic",
+            "strikethrough",
+            "|",
+            "heading",
+            "code",
+            "quote",
+            "|",
+            "unordered-list",
+            "ordered-list",
+            "|",
+            "preview",
+            "side-by-side",
+            "fullscreen"
+        ]
+    }), []);
+
+
     return (
         <div className='flex flex-col flex-1 h-screen bg-white'>
             {/* //header */}
@@ -49,6 +83,7 @@ const Right = ({
                     <button onClick={() => setAlign("left")}><FormatAlignLeftIcon fontSize='small' /></button>
                     <button onClick={() => setAlign("center")}><FormatAlignCenterIcon fontSize='small' /></button>
                     <button onClick={() => setAlign("right")}><FormatAlignRightIcon fontSize='small' /></button>
+                    {/* <button onClick={() => { handleStrikeThrough() }}><StrikethroughSIcon fontSize='small' /></button> */}
                 </div>
 
                 {/* right */}
@@ -70,20 +105,29 @@ const Right = ({
 
             {/* //editor */}
             {
-                currFile && (currFile.note.type == "note" || !currFile.note.type) ? (
-                    <div className='flex-1 flex flex-col px-8 md:px-16 pt-4 pb-12 overflow-y-auto'>
-                        <div className='mx-auto w-full flex-1 flex flex-col'>
-                            <textarea
-                                name="editor"
-                                spellCheck="false"
-                                id="editor"
-                                value={editorText}
-                                onChange={(e) => { handleEditor(e) }}
-                                className={`flex-1 min-h-[calc(100vh-120px)] bg-transparent outline-none resize-none text-gray-800 text-[16px] leading-[1.8] placeholder-gray-300 focus:outline-none focus:ring-0 selection:bg-gray-200 transition-colors duration-200 ${align === "left" ? "text-left" : align === "center" ? "text-center" : "text-right"}`}
-                                placeholder="Press Enter to continue typing..."
-                            ></textarea>
+                currFile && (currFile.note.type == "note" || !currFile.note.type) ? 
+                    (
+                        <div className='flex-1 flex flex-col px-8 md:px-16 pt-4 pb-12 overflow-y-auto'>
+                            <div className='mx-auto w-full flex-1 flex flex-col'>
+                                {/* <textarea
+                                    name="editor"
+                                    spellCheck="false"
+                                    id="editor"
+                                    value={editorText}
+                                    onChange={(e) => { handleEditor(e) }}
+                                    className={`flex-1 min-h-[calc(100vh-120px)] bg-transparent outline-none resize-none text-gray-800 text-[16px] leading-[1.8] placeholder-gray-300 focus:outline-none focus:ring-0 selection:bg-gray-200 transition-colors duration-200 ${align === "left" ? "text-left" : align === "center" ? "text-center" : "text-right"}`}
+                                    placeholder="Press Enter to continue typing..."
+                                ></textarea> */}
+                                 <SimpleMDE
+                                        value={editorText}
+                                        onChange={(value) => handleEditor({ target: { value } })}
+                                        options={options}
+                                        className={`flex-1 min-h-[calc(100vh-120px)] outline-none resize-none bg-gray-200 text-gray-800 text-[16px] leading-[1.8] placeholder-gray-300 focus:outline-none focus:ring-0 selection:bg-gray-400 transition-colors duration-200 ${align === "left" ? "text-left" : align === "center" ? "text-center" : "text-right"}`}
+                                    />
+                            </div>
                         </div>
-                    </div>) : currFile && currFile.note.type == "task" ? (
+                    ) : currFile && currFile.note.type == "task" ? 
+                    (
                         <div className='flex-1 flex flex-col px-8 md:px-16 pt-4 pb-12 overflow-y-auto'>
                             {/* topbar */}
                             <div className='flex items-center justify-between mb-4'>
