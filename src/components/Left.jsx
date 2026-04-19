@@ -104,9 +104,6 @@ const Left = ({
         {/* Example empty state or list container */}
         {
           allFiles.length > 0 ? allFiles.map((file) => {
-            if (currFile == null) {
-              handleFileClick(file);
-            }
             if (search.trim() !== "" && !file.note.name.toLowerCase().includes(search.toLowerCase())) {
               return null;
             } else {

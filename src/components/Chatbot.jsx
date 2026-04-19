@@ -2,11 +2,16 @@ import { React, useState, useEffect } from 'react';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import SendIcon from '@mui/icons-material/Send';
 import { useFirebase } from '../context/Firebase';
+import ReactMarkdown from "react-markdown";
+import fs from "fs";
+import path from 'path';
 
 const Chatbot = (props) => {
     const firebase = useFirebase();
     const [showChatbot, setShowChatbot] = useState(false);
     const [fileContent, setfileContent] = useState(null);
+    const [Message, setMessage] = useState('');
+    const [History, setHistory] = useState([]);
 
     useEffect(() => {
         if (firebase.isLoggedIn && props.file) {
@@ -18,7 +23,31 @@ const Chatbot = (props) => {
         setShowChatbot(!showChatbot);
     };
 
-    const handleChatBot = () => {
+    const handleChatBot = async () => {
+        if (!Message.trim()) return;
+
+        setHistory(prev => [...prev, { role: 'user', content: Message }]);
+
+        console.log("User message:", Message);
+        const response = await fetch('http://localhost:5000/gpt', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                message: Message,
+                fileContent: fileContent,
+            }),
+        });
+
+        setMessage('');
+
+        const data = await response.json();
+        console.log("Chatbot response:", data);
+        const reply = data?.choices?.[0]?.message?.content;
+        console.log("Clean reply:", reply);
+
+        setHistory(prev => [...prev, { role: 'bot', content: reply }]);
 
     }
 
@@ -42,24 +71,79 @@ const Chatbot = (props) => {
                 </div>
                 {/* //reply by bot */}
                 <div className="flex-1 p-4 flex flex-col overflow-hidden">
-                    {/* Chatbot content will go here */}
-                    <div className="chatbot-display gap-2 flex-1 overflow-y-auto overflow-x-hidden mb-2 pr-1">
-                        <div className='flex justify-start items-center'>
-                            <SmartToyIcon className='w-10 h-10 text-blue-500 p-1' />
-                            <p className='text-sm text-gray-800 p-2 rounded-lg font-medium break-words'>Hello! How can I help you today?</p>
-                        </div>
-                        <div className='flex justify-end items-center'>
-                            <p className='text-sm text-gray-800 p-2 rounded-lg font-medium break-words'>Hello! How can I help you today?</p>
-                        </div>
+
+                    {/* SCROLL AREA */}
+                    <div className="flex-1 overflow-y-auto space-y-2 pr-1">
+                        {
+                            History.length > 0 ? History.map((msg, index) => (
+                                <div
+                                    key={index}
+                                    className={`flex ${msg.role === 'bot' ? 'justify-start' : 'justify-end'}`}
+                                    id='messages'
+                                >
+                                    {msg.role === 'bot' && (
+                                        <SmartToyIcon className='w-8 h-8 text-blue-500 p-1 mt-1' />
+                                    )}
+
+                                    {/* MESSAGE BOX */}
+                                    <div
+                                        className={`rounded-lg p-2 max-w-[80%] break-words overflow-hidden
+                                            ${msg.role === 'bot'
+                                                ? 'bg-gray-100 rounded-tr-2xl rounded-b-2xl'
+                                                : 'bg-green-200 rounded-tl-2xl rounded-b-2xl'
+                                            }`}
+                                        id='message'
+                                    >
+                                        <div className="whitespace-pre-wrap break-words">
+                                            <ReactMarkdown
+                                                components={{
+                                                    code({ inline, children }) {
+                                                        return inline ? (
+                                                            <code className="break-words">
+                                                                {children}
+                                                            </code>
+                                                        ) : (
+                                                            <pre className="overflow-x-auto max-w-full bg-black/80 text-white p-2 rounded">
+                                                                <code className="whitespace-pre-wrap break-words">
+                                                                    {children}
+                                                                </code>
+                                                            </pre>
+                                                        );
+                                                    }
+                                                }}
+                                            >
+                                                {msg.content || ""}
+                                            </ReactMarkdown>
+                                        </div>
+                                    </div>
+                                </div>
+                            )) : (
+                                <div className='flex justify-center items-center h-full'>
+                                    <p className='text-sm text-gray-500'>
+                                        No messages yet. Start the conversation!
+                                    </p>
+                                </div>
+                            )
+                        }
                     </div>
 
-                    {/* input by user */}
-                    <div className='flex w-full h-10 rounded-lg border border-white/40 bg-white/50 p-2 placeholder-gray-500 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400/50 transition-all'>
-                        <input type="text" placeholder="Type a message..." className='w-full h-full focus:outline-none' />
-                        <button onClick={handleChatBot} className='h-full w-10 flex justify-center items-center transition-all duration-300 ease-in-out hover:scale-110'>
-                            <SendIcon className='w-full h-full text-blue-500 p-1' fontSize='large' />
-                        </button>
+                    {/* INPUT */}
+                    <div className='flex w-full h-10 rounded-lg border border-white/40 bg-white/50 p-2'>
+                        <form action="#" className='flex w-full h-full' onSubmit={(e) => { e.preventDefault() }}>
+                            <input
+                                type="text"
+                                value={Message}
+                                onChange={(e) => setMessage(e.target.value)}
+                                placeholder="Type a message..."
+                                className='w-full h-full focus:outline-none bg-transparent'
+                                id='input-chatbot'
+                            />
+                            <button onClick={handleChatBot} className='w-10 flex items-center justify-center'>
+                                <SendIcon className='text-blue-500' />
+                            </button>
+                        </form>
                     </div>
+
                 </div>
             </div>
         </div>

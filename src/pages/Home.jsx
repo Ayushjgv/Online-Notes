@@ -48,6 +48,12 @@ const Home = () => {
   }, [firebase.isLoggedIn, firebase.User, currFile]);
 
 
+  useEffect(() => {
+    if (!currFile && allFiles.length > 0) {
+      handleFileClick(allFiles[0]);
+    }
+  }, [allFiles]);
+
   const handleAddButton = () => {
     setShowPopup(!showPopup);
   }
