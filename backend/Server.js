@@ -6,7 +6,7 @@ const app = express();
 const port = 5000;
 
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "https://online-notes-two.vercel.app",
   credentials: true
 }));
 
