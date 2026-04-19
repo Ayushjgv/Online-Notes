@@ -29,7 +29,8 @@ const Chatbot = (props) => {
         setHistory(prev => [...prev, { role: 'user', content: Message }]);
 
         console.log("User message:", Message);
-        const response = await fetch('http://localhost:5000/gpt', {
+        
+        const response = await fetch('https://online-notes-fz59.onrender.com/gpt', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
