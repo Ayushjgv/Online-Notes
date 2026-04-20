@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from 'react';
+import { React, useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 //firebase
@@ -25,6 +25,9 @@ const Home = () => {
 
   const firebase = useFirebase();
   const navigate = useNavigate();
+
+  let timer = useRef(null);
+
 
 
 
@@ -118,7 +121,12 @@ const Home = () => {
 
   const handleEditor = (e) => {
     setEditorText(e.target.value);
-    firebase.updateNote(currFile.id, { note: { name: currFile.note.name, content: e.target.value, type: currFile.note.type } });
+
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => {
+      console.log("api called");
+      firebase.updateNote(currFile.id, { note: { name: currFile.note.name, content: e.target.value, type: currFile.note.type } });
+    }, 500);
   }
 
   const handleDownload = () => {
